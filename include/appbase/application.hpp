@@ -1,8 +1,10 @@
 #pragma once
 #include <appbase/plugin.hpp>
+#include <appbase/channel.hpp>
+#include <appbase/method.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/core/demangle.hpp>
-#include <boost/asio.hpp>
+#include <typeindex>
 
 namespace appbase {
    namespace bpo = boost::program_options;
@@ -12,6 +14,7 @@ namespace appbase {
    {
       public:
          ~application();
+
 
          /** @brief Set version
           *
@@ -48,6 +51,11 @@ namespace appbase {
           */
          void                 exec();
          void                 quit();
+         bool                 debug_mode() const;
+         bool                 rpc_enabled() const;
+         bool                 client_mode() const;
+         void                 set_client_mode(bool client_mode);
+         bool                 interactive_mode() const;
 
          static application&  instance();
 

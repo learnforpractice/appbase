@@ -26,7 +26,12 @@ class application_impl {
       bfs::path               _logging_conf{"logging.json"};
 
       uint64_t                _version;
-};
+      bool _debug = false;
+      bool _rpc = false;
+      bool _client = false;
+      bool _server = false;
+      bool _interactive = false;
+      };
 
 application::application()
 :my(new application_impl()){
@@ -76,6 +81,11 @@ void application::set_program_options()
    options_description app_cfg_opts( "Application Config Options" );
    options_description app_cli_opts( "Application Command Line Options" );
    app_cfg_opts.add_options()
+         ("debug", bpo::bool_switch()->notifier([this](bool e){my->_debug = e;}), "Enable debugging.")
+         ("rpc-server", bpo::bool_switch()->notifier([this](bool e){my->_server = e;}), "Setup a eosnode in rpc server mode.")
+         ("server", bpo::bool_switch()->notifier([this](bool e){;}), "Setup a eosnode in rpc server mode.")
+         ("rpc-client", bpo::bool_switch()->notifier([this](bool e){my->_client = e;}), "Setup a eosnode in rpc client mode.")
+         ("interactive,i", bpo::bool_switch()->notifier([this](bool e){my->_interactive = e;}), "Enter in an interactive console.")
          ("plugin", bpo::value< vector<string> >()->composing(), "Plugin(s) to enable, may be specified multiple times");
 
    app_cli_opts.add_options()
@@ -182,6 +192,26 @@ void application::quit() {
    io_serv->stop();
 }
 
+bool application::debug_mode() const {
+   return my->_debug;
+}
+
+bool application::client_mode() const {
+   return my->_client;
+}
+
+void application::set_client_mode(bool client_mode) {
+   my->_client = client_mode;
+}
+
+bool application::rpc_enabled() const {
+   return my->_rpc;
+}
+
+bool application::interactive_mode() const {
+   return my->_interactive;
+}
+
 void application::exec() {
    std::shared_ptr<boost::asio::signal_set> sigint_set(new boost::asio::signal_set(*io_serv, SIGINT));
    sigint_set->async_wait([sigint_set,this](const boost::system::error_code& err, int num) {
@@ -250,3 +280,7 @@ bfs::path application::data_dir()const {
 }
 
 } /// namespace appbase
+
+extern "C" void set_client_mode(int client_mode) {
+   appbase::app().set_client_mode(client_mode);
+}
