@@ -228,6 +228,10 @@ bool application::debug_mode() const {
    return my->_debug;
 }
 
+void application::set_debug_mode(bool d) {
+   my->_debug = d;
+}
+
 bool application::client_mode() const {
    return my->_client;
 }
@@ -345,3 +349,9 @@ bfs::path application::config_dir() const {
 extern "C" void set_client_mode(int client_mode) {
    appbase::app().set_client_mode(client_mode);
 }
+
+void app_set_debug_mode_(bool d) {
+   appbase::app().set_debug_mode(d);
+}
+
+
