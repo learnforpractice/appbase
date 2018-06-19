@@ -29,7 +29,7 @@ if( APPLE )
 else( APPLE )
   # Linux Specific Options Here
   message( STATUS "Configuring AppBase on Linux" )
-  set( CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++14 -Wall" )
+  set( CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++14 -Wall -fPIC" )
   set( rt_library rt )
   set( pthread_library pthread)
   if ( FULL_STATIC_BUILD )
@@ -42,7 +42,7 @@ if(ENABLE_COVERAGE_TESTING)
     SET(CMAKE_CXX_FLAGS "--coverage ${CMAKE_CXX_FLAGS}")
 endif()
 
-add_library( appbase SHARED
+add_library( appbase 
              application.cpp
              ${HEADERS}
            )
