@@ -42,7 +42,7 @@ if(ENABLE_COVERAGE_TESTING)
     SET(CMAKE_CXX_FLAGS "--coverage ${CMAKE_CXX_FLAGS}")
 endif()
 
-add_library( appbase 
+add_library( appbase SHARED
              application.cpp
              ${HEADERS}
            )
