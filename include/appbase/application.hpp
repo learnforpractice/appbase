@@ -67,7 +67,7 @@ namespace appbase {
 
          template<typename ... Plugins>
          bool                 initialize_ex(int argc, char** argv, Plugins... plugin) {
-            return initialize_impl(argc, argv, {find_plugin(plugin)...});
+            return initialize_impl(argc, argv, {find_plugin(string("eosio::")+plugin)...});
          }
 
          void                  startup();
@@ -92,7 +92,11 @@ namespace appbase {
          abstract_plugin& get_plugin(const string& name)const;
 
          abstract_plugin& get_plugin(const char* name)const {
-            return get_plugin(string(name));
+            string s(name);
+            if (s.find("eosio::") == s.npos) {
+               s = string("eosio::")+s;
+            }
+            return get_plugin(s);
          }
 
          template<typename Plugin>
