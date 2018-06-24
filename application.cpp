@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <dlfcn.h>
 
 namespace appbase {
 
@@ -64,8 +65,10 @@ bfs::path application::get_logging_conf() const {
 
 void application::startup() {
    try {
-      for (auto plugin : initialized_plugins)
-         plugin->startup();
+      for (auto p : initialized_plugins) {
+         printf("%s \n", p->name().c_str());
+         p->startup();
+      }
    } catch(...) {
       shutdown();
       throw;
@@ -346,6 +349,24 @@ bfs::path application::data_dir() const {
 bfs::path application::config_dir() const {
    return my->_config_dir;
 }
+
+abstract_plugin* application::register_plugin(const char* name) {
+   char _path[128];
+   snprintf(_path, sizeof(_path), "../libs/lib%s.dylib", name);
+   void *handle = dlopen(_path, RTLD_LAZY | RTLD_LOCAL);
+   if (handle == NULL) {
+      snprintf(_path, sizeof(_path), "../libs/lib%sd.dylib", name);
+      handle = dlopen(_path, RTLD_LAZY | RTLD_LOCAL);
+   }
+
+   fn_plugin_init _plugin_init = (fn_plugin_init)dlsym(handle, "plugin_init");
+   if (_plugin_init == NULL) {
+      return 0;
+   }
+   _plugin_init(this);
+   return this->find_plugin(string(name));
+}
+
 
 } /// namespace appbase
 

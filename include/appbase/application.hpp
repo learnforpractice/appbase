@@ -65,6 +65,11 @@ namespace appbase {
             return initialize_impl(argc, argv, {find_plugin<Plugin>()...});
          }
 
+         template<typename ... Plugins>
+         bool                 initialize_ex(int argc, char** argv, Plugins... plugin) {
+            return initialize_impl(argc, argv, {find_plugin(plugin)...});
+         }
+
          void                  startup();
          void                  shutdown();
 
@@ -86,6 +91,10 @@ namespace appbase {
          abstract_plugin* find_plugin(const string& name)const;
          abstract_plugin& get_plugin(const string& name)const;
 
+         abstract_plugin& get_plugin(const char* name)const {
+            return get_plugin(string(name));
+         }
+
          template<typename Plugin>
          auto& register_plugin() {
             auto existing = find_plugin<Plugin>();
@@ -97,6 +106,8 @@ namespace appbase {
             plug->register_dependencies();
             return *plug;
          }
+
+         abstract_plugin* register_plugin(const char* name);
 
          template<typename Plugin>
          Plugin* find_plugin()const {
@@ -238,3 +249,7 @@ namespace appbase {
          std::string _name;
    };
 }
+
+typedef void (*fn_plugin_init)(appbase::application* app);
+typedef void (*fn_plugin_deinit)();
+
