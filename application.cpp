@@ -5,6 +5,8 @@
 #include <boost/asio/signal_set.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include <appbase/platform.hpp>
+
 #include <iostream>
 #include <fstream>
 #include <dlfcn.h>
@@ -352,10 +354,10 @@ bfs::path application::config_dir() const {
 
 abstract_plugin* application::register_plugin(const char* name) {
    char _path[128];
-   snprintf(_path, sizeof(_path), "../libs/lib%s.dylib", name);
+   snprintf(_path, sizeof(_path), "../libs/lib%s%s", name, DYLIB_SUFFIX);
    void *handle = dlopen(_path, RTLD_LAZY | RTLD_LOCAL);
    if (handle == NULL) {
-      snprintf(_path, sizeof(_path), "../libs/lib%sd.dylib", name);
+      snprintf(_path, sizeof(_path), "../libs/lib%sd%s", name, DYLIB_SUFFIX);
       handle = dlopen(_path, RTLD_LAZY | RTLD_LOCAL);
    }
 

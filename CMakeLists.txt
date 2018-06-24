@@ -1,6 +1,7 @@
 # Defines AppBase library target.
 project( AppBase )
 cmake_minimum_required( VERSION 2.8.12 )
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/include/appbase/platform.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/include/appbase/platform.hpp)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
 
@@ -50,7 +51,9 @@ add_library( appbase SHARED
 target_link_libraries( appbase ${Boost_LIBRARIES})
 
 target_include_directories( appbase
-                            PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" ${Boost_INCLUDE_DIR})
+                            PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" 
+                            PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/include"
+                            ${Boost_INCLUDE_DIR})
 
 set_target_properties( appbase PROPERTIES PUBLIC_HEADER "${HEADERS}" )
 
