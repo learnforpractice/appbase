@@ -93,7 +93,8 @@ namespace appbase {
 
          abstract_plugin& get_plugin(const char* name)const {
             string s(name);
-            if (s.find("eosio::") == s.npos) {
+            if (s.find("eosio::") == 0) {
+            } else {
                s = string("eosio::")+s;
             }
             return get_plugin(s);

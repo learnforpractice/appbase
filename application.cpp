@@ -365,8 +365,12 @@ abstract_plugin* application::register_plugin(const char* name) {
    if (_plugin_init == NULL) {
       return 0;
    }
+
    _plugin_init(this);
-   return this->find_plugin(string(name));
+
+   string s("eosio::");
+   s += name;
+   return this->find_plugin(s);
 }
 
 
