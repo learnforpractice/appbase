@@ -7,7 +7,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
 
 include( InstallDirectoryPermissions )
 
-file(GLOB HEADERS "include/appbase/*.hpp")
+file(GLOB HEADERS "include/appbase/*.hpp" "${CMAKE_CURRENT_BINARY_DIR}/include/appbase/*.hpp")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
 set(BOOST_COMPONENTS)
