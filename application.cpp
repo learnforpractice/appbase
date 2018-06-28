@@ -22,7 +22,7 @@ class application_impl {
    public:
       application_impl():_app_options("Application Options"){
       }
-      const variables_map*    _options = nullptr;
+      variables_map    _options;
       options_description     _app_options;
       options_description     _cfg_options;
 
@@ -122,11 +122,16 @@ void application::set_program_options()
    my->_app_options.add(app_cli_opts);
 }
 
+bool application::has_option(const char* option) {
+   return my->_options.count(option);
+}
+
 bool application::initialize_impl(int argc, char** argv, vector<abstract_plugin*> autostart_plugins) {
    set_program_options();
 
-   bpo::variables_map options;
-   bpo::store(bpo::parse_command_line(argc, argv, my->_app_options), options);
+   bpo::store(bpo::parse_command_line(argc, argv, my->_app_options), my->_options);
+
+   bpo::variables_map& options = my->_options;
 
    if( options.count( "help" ) ) {
       cout << my->_app_options << std::endl;
