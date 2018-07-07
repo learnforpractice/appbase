@@ -83,6 +83,7 @@ namespace appbase {
          void                 set_client_mode(bool client_mode);
          bool                 interactive_mode() const;
          string               get_ipc_path() const;
+         bool                 app_init_finished() const;
 
          bool                 debug_mode() const;
          void                 set_debug_mode(bool d);

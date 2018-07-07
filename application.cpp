@@ -36,6 +36,7 @@ class application_impl {
       bool _client = false;
       bool _server = false;
       bool _interactive = false;
+      bool _init_finished = false;
       string _ipc_path;
       };
 
@@ -150,6 +151,10 @@ int application::get_option(const char* option, char *result, int size) {
    return size;
 }
 
+bool application::app_init_finished() const {
+   return my->_init_finished;
+}
+
 bool application::initialize_impl(int argc, char** argv, vector<abstract_plugin*> autostart_plugins) {
    set_program_options();
 
@@ -240,7 +245,7 @@ bool application::initialize_impl(int argc, char** argv, vector<abstract_plugin*
       std::cerr << "Failed to initialize\n";
       return false;
    }
-
+   my->_init_finished = true;
    return true;
 }
 
