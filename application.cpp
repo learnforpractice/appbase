@@ -36,6 +36,7 @@ class application_impl {
       bool _client = false;
       bool _server = false;
       bool _interactive = false;
+      string _ipc_path;
       };
 
 application::application()
@@ -114,6 +115,7 @@ void application::set_program_options()
          ("print-default-config", "Print default configuration template")
          ("data-dir,d", bpo::value<std::string>(), "Directory containing program runtime data")
          ("config-dir", bpo::value<std::string>(), "Directory containing configuration files such as config.ini")
+         ("ipc-path", bpo::value<std::string>(), "Directory containing configuration files such as config.ini")
          ("config,c", bpo::value<std::string>()->default_value( "config.ini" ), "Configuration file name relative to config-dir")
          ("logconf,l", bpo::value<std::string>()->default_value( "logging.json" ), "Logging configuration file name/path for library users");
 
@@ -166,6 +168,10 @@ bool application::initialize_impl(int argc, char** argv, vector<abstract_plugin*
       if( config_dir.is_relative() )
          config_dir = bfs::current_path() / config_dir;
       my->_config_dir = config_dir;
+   }
+
+   if( options.count( "ipc-path" ) ) {
+      my->_ipc_path = options["ipc-path"].as<std::string>();
    }
 
    auto workaround = options["logconf"].as<std::string>();
@@ -355,6 +361,10 @@ bfs::path application::data_dir() const {
 
 bfs::path application::config_dir() const {
    return my->_config_dir;
+}
+
+string application::get_ipc_path() const {
+   return my->_ipc_path;
 }
 
 abstract_plugin* application::register_plugin(const char* name) {
