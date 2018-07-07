@@ -147,8 +147,8 @@ int application::get_option(const char* option, char *result, int size) {
       return 0;
    }
 
-   strncpy(result, _option.c_str(), size);
-   return size;
+   strcpy(result, _option.c_str());
+   return _option.size();
 }
 
 bool application::app_init_finished() const {
