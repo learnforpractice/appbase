@@ -171,6 +171,7 @@ namespace appbase {
 
          boost::asio::io_service& get_io_service() { return *io_serv; }
          bool has_option(const char* option);
+         int get_option(const char* option, char *result, int size);
       protected:
          template<typename Impl>
          friend class plugin;

@@ -128,6 +128,28 @@ bool application::has_option(const char* option) {
    return my->_options.count(option);
 }
 
+int application::get_option(const char* option, char *result, int size) {
+   if (option == NULL) {
+      return 0;
+   }
+
+   if (!my->_options.count(option)) {
+      return 0;
+   }
+
+   string _option = my->_options[option].as<std::string>();
+   if (result == NULL || size <= 0) {
+      return _option.size();
+   }
+
+   if (_option.size()+1 > size) {
+      return 0;
+   }
+
+   strncpy(result, _option.c_str(), size);
+   return size;
+}
+
 bool application::initialize_impl(int argc, char** argv, vector<abstract_plugin*> autostart_plugins) {
    set_program_options();
 
