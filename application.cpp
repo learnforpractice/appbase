@@ -398,10 +398,6 @@ abstract_plugin* application::register_plugin(const char* name) {
    char _path[128];
    snprintf(_path, sizeof(_path), "../libs/lib%s%s", name, DYLIB_SUFFIX);
    void *handle = dlopen(_path, RTLD_LAZY | RTLD_LOCAL);
-   if (handle == NULL) {
-      snprintf(_path, sizeof(_path), "../libs/lib%sd%s", name, DYLIB_SUFFIX);
-      handle = dlopen(_path, RTLD_LAZY | RTLD_LOCAL);
-   }
 
    fn_plugin_init _plugin_init = (fn_plugin_init)dlsym(handle, "plugin_init");
    if (_plugin_init == NULL) {

@@ -4,5 +4,5 @@
  * \warning This file is machine generated. DO NOT EDIT.  See core_symbol.hpp.in for changes.
  */
 
-#define DYLIB_SUFFIX "${CMAKE_SHARED_LIBRARY_SUFFIX}"
+#define DYLIB_SUFFIX "${DEBUG_FLAG}${CMAKE_SHARED_LIBRARY_SUFFIX}"
 

@@ -1,6 +1,11 @@
 # Defines AppBase library target.
 project( AppBase )
 cmake_minimum_required( VERSION 2.8.12 )
+
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+set(DEBUG_FLAG "d")
+endif()
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/include/appbase/platform.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/include/appbase/platform.hpp)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
