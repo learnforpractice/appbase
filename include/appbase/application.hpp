@@ -82,7 +82,7 @@ namespace appbase {
          bool                 client_mode() const;
          void                 set_client_mode(bool client_mode);
          bool                 interactive_mode() const;
-         string               get_ipc_path() const;
+         string               get_ipc_dir() const;
          bool                 app_init_finished() const;
 
          bool                 debug_mode() const;
@@ -173,6 +173,8 @@ namespace appbase {
          boost::asio::io_service& get_io_service() { return *io_serv; }
          bool has_option(const char* option);
          int get_option(const char* option, char *result, int size);
+         string get_option(const char* option);
+
       protected:
          template<typename Impl>
          friend class plugin;

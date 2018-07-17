@@ -37,7 +37,7 @@ class application_impl {
       bool _server = false;
       bool _interactive = false;
       bool _init_finished = false;
-      string _ipc_path;
+      string _ipc_dir;
       };
 
 application::application()
@@ -116,7 +116,8 @@ void application::set_program_options()
          ("print-default-config", "Print default configuration template")
          ("data-dir,d", bpo::value<std::string>(), "Directory containing program runtime data")
          ("config-dir", bpo::value<std::string>(), "Directory containing configuration files such as config.ini")
-         ("ipc-path", bpo::value<std::string>(), "directory for ipc")
+         ("ipc-dir", bpo::value<std::string>(), "directory for ipc")
+         ("vm-index", bpo::value<std::string>(), "vm index")
          ("config,c", bpo::value<std::string>()->default_value( "config.ini" ), "Configuration file name relative to config-dir")
          ("logconf,l", bpo::value<std::string>()->default_value( "logging.json" ), "Logging configuration file name/path for library users");
 
@@ -127,6 +128,10 @@ void application::set_program_options()
 
 bool application::has_option(const char* option) {
    return my->_options.count(option);
+}
+
+string application::get_option(const char* option) {
+   return my->_options[option].as<std::string>();
 }
 
 int application::get_option(const char* option, char *result, int size) {
@@ -197,8 +202,8 @@ bool application::initialize_impl(int argc, char** argv, vector<abstract_plugin*
       my->_config_dir = config_dir;
    }
 
-   if( options.count( "ipc-path" ) ) {
-      my->_ipc_path = options["ipc-path"].as<std::string>();
+   if( options.count( "ipc-dir" ) ) {
+      my->_ipc_dir = options["ipc-dir"].as<std::string>();
    }
 
    auto workaround = options["logconf"].as<std::string>();
@@ -241,8 +246,11 @@ bool application::initialize_impl(int argc, char** argv, vector<abstract_plugin*
             plugin->initialize(options);
 
       bpo::notify(options);
-   } catch (...) {
+   } catch(const std::exception& e) {
+      std::cerr << "Caught exception " << e.what() << "\n";
+  } catch (...) {
       std::cerr << "Failed to initialize\n";
+      throw;
       return false;
    }
    my->_init_finished = true;
@@ -390,8 +398,8 @@ bfs::path application::config_dir() const {
    return my->_config_dir;
 }
 
-string application::get_ipc_path() const {
-   return my->_ipc_path;
+string application::get_ipc_dir() const {
+   return my->_ipc_dir;
 }
 
 abstract_plugin* application::register_plugin(const char* name) {
