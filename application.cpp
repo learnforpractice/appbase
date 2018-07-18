@@ -105,9 +105,7 @@ void application::set_program_options()
    app_cfg_opts.add_options()
          ("debug", bpo::bool_switch()->notifier([this](bool e){my->_debug = e;}), "Enable debugging.")
          ("rpc-server", bpo::bool_switch()->notifier([this](bool e){my->_server = e;}), "Setup a eosnode in rpc server mode.")
-         ("server", bpo::bool_switch()->notifier([this](bool e){;}), "Setup a eosnode in rpc server mode.")
          ("rpc-client", bpo::bool_switch()->notifier([this](bool e){my->_client = e;}), "Setup a eosnode in rpc client mode.")
-         ("interactive,i", bpo::bool_switch()->notifier([this](bool e){my->_interactive = e;}), "Enter in an interactive console.")
          ("plugin", bpo::value< vector<string> >()->composing(), "Plugin(s) to enable, may be specified multiple times");
 
    app_cli_opts.add_options()
@@ -116,6 +114,10 @@ void application::set_program_options()
          ("print-default-config", "Print default configuration template")
          ("data-dir,d", bpo::value<std::string>(), "Directory containing program runtime data")
          ("config-dir", bpo::value<std::string>(), "Directory containing configuration files such as config.ini")
+
+         ("read-only", "read only mode")
+         ("interactive,i", bpo::bool_switch()->notifier([this](bool e){my->_interactive = e;}), "Enter in an interactive console.")
+
          ("ipc-dir", bpo::value<std::string>(), "directory for ipc")
          ("vm-index", bpo::value<std::string>(), "vm index")
          ("config,c", bpo::value<std::string>()->default_value( "config.ini" ), "Configuration file name relative to config-dir")
@@ -246,9 +248,7 @@ bool application::initialize_impl(int argc, char** argv, vector<abstract_plugin*
             plugin->initialize(options);
 
       bpo::notify(options);
-   } catch(const std::exception& e) {
-      std::cerr << "Caught exception " << e.what() << "\n";
-  } catch (...) {
+   } catch (...) {
       std::cerr << "Failed to initialize\n";
       throw;
       return false;
