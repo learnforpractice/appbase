@@ -118,6 +118,7 @@ void application::set_program_options()
          ("read-only", "read only mode")
          ("interactive,i", bpo::bool_switch()->notifier([this](bool e){my->_interactive = e;}), "Enter in an interactive console.")
 
+         ("no-ipc", "disable ipc")
          ("ipc-dir", bpo::value<std::string>(), "directory for ipc")
          ("vm-index", bpo::value<std::string>(), "vm index")
          ("config,c", bpo::value<std::string>()->default_value( "config.ini" ), "Configuration file name relative to config-dir")
