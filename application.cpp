@@ -85,6 +85,11 @@ application& application::instance() {
 }
 application& app() { return application::instance(); }
 
+void application::init_args(int argc, char** argv) {
+   set_program_options();
+   bpo::store(bpo::parse_command_line(argc, argv, my->_app_options), my->_options);
+}
+
 
 void application::set_program_options()
 {
@@ -164,9 +169,6 @@ bool application::app_init_finished() const {
 }
 
 bool application::initialize_impl(int argc, char** argv, vector<abstract_plugin*> autostart_plugins) {
-   set_program_options();
-
-   bpo::store(bpo::parse_command_line(argc, argv, my->_app_options), my->_options);
 
    bpo::variables_map& options = my->_options;
 
