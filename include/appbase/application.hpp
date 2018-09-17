@@ -88,6 +88,8 @@ namespace appbase {
          bool                 client_mode() const;
          void                 set_client_mode(bool client_mode);
          bool                 interactive_mode() const;
+         bool                 is_eos_main_net() const;
+
          string               get_ipc_dir() const;
          bool                 app_init_finished() const;
 

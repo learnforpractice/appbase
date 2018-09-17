@@ -38,6 +38,7 @@ class application_impl {
       bool _server = false;
       bool _interactive = false;
       bool _init_finished = false;
+      bool _is_eos_main_net = false;
       string _ipc_dir;
       };
 
@@ -127,7 +128,7 @@ void application::set_program_options()
 
          ("read-only", "read only mode")
          ("interactive,i", bpo::bool_switch()->notifier([this](bool e){my->_interactive = e;}), "Enter in an interactive console.")
-
+         ("eos-main-net", bpo::bool_switch()->notifier([this](bool e){my->_is_eos_main_net = e;}), "Join Eos main network.")
          ("use-ipc", "use ipc")
          ("ipc-dir", bpo::value<std::string>(), "directory for ipc")
          ("vm-index", bpo::value<std::string>(), "vm index")
@@ -310,6 +311,10 @@ bool application::rpc_enabled() const {
 
 bool application::interactive_mode() const {
    return my->_interactive;
+}
+
+bool application::is_eos_main_net() const {
+   return my->_is_eos_main_net;
 }
 
 void application::exec() {
