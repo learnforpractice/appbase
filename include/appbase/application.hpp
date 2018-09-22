@@ -10,6 +10,8 @@ namespace appbase {
    namespace bpo = boost::program_options;
    namespace bfs = boost::filesystem;
 
+   using bpo::variables_map;
+
    class application
    {
       public:
@@ -182,6 +184,7 @@ namespace appbase {
          bool has_option(const char* option);
          int get_option(const char* option, char *result, int size);
          string get_option(const char* option);
+         variables_map& get_variables_map();
 
       protected:
          template<typename Impl>

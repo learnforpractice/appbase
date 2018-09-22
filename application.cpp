@@ -170,6 +170,10 @@ int application::get_option(const char* option, char *result, int size) {
    return _option.size();
 }
 
+variables_map& application::get_variables_map() {
+   return my->_options;
+}
+
 bool application::app_init_finished() const {
    return my->_init_finished;
 }
