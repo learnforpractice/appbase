@@ -77,7 +77,6 @@ namespace appbase {
             return initialize_impl(argc, argv, {find_plugin(string("eosio::")+plugin)...});
          }
 
-         void init_args(int argc, char** argv);
          void                  startup();
          void                  shutdown();
 
