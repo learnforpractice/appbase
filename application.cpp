@@ -109,6 +109,7 @@ void application::set_program_options()
    options_description app_cli_opts( "Application Command Line Options" );
    app_cfg_opts.add_options()
          ("debug", "Enable debugging.")
+         ("light-client", "rpc light client.")
          ("rpc-server", bpo::bool_switch()->notifier([this](bool e){my->_server = e;}), "Setup a eosnode in rpc server mode.")
          ("rpc-client", bpo::bool_switch()->notifier([this](bool e){my->_client = e;}), "Setup a eosnode in rpc client mode.")
          ("plugin", bpo::value< vector<string> >()->composing(), "Plugin(s) to enable, may be specified multiple times");
