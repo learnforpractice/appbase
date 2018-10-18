@@ -118,6 +118,7 @@ void application::set_program_options()
          ("help,h", "Print this help message and exit.")
          ("version,v", "Print version information.")
          ("print-default-config", "Print default configuration template")
+         ("script", bpo::value<std::string>(), "Python script to run")
          ("data-dir,d", bpo::value<std::string>(), "Directory containing program runtime data")
          ("config-dir", bpo::value<std::string>(), "Directory containing configuration files such as config.ini")
 
