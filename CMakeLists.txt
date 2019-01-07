@@ -1,6 +1,8 @@
 # Defines AppBase library target.
+cmake_minimum_required( VERSION 3.4 )
 project( AppBase )
-cmake_minimum_required( VERSION 2.8.12 )
+
+include( GNUInstallDirs )
 
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 set(DEBUG_FLAG "d")
@@ -14,7 +16,6 @@ include( InstallDirectoryPermissions )
 
 file(GLOB HEADERS "include/appbase/*.hpp" "${CMAKE_CURRENT_BINARY_DIR}/include/appbase/*.hpp")
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
 set(BOOST_COMPONENTS)
 list(APPEND BOOST_COMPONENTS thread
                              date_time
@@ -31,24 +32,30 @@ set( Boost_USE_STATIC_LIBS ON CACHE STRING "ON or OFF" )
 if( APPLE )
   # Apple Specific Options Here
   message( STATUS "Configuring AppBase on OS X" )
-  set( CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++14 -stdlib=libc++ -Wall -Wno-conversion -Wno-deprecated-declarations" )
 else( APPLE )
   # Linux Specific Options Here
   message( STATUS "Configuring AppBase on Linux" )
+<<<<<<< HEAD
   set( CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++14 -Wall -fPIC" )
   set( rt_library rt )
   set( pthread_library pthread)
+=======
+>>>>>>> eos/master
   if ( FULL_STATIC_BUILD )
     set( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libstdc++ -static-libgcc")
   endif ( FULL_STATIC_BUILD )
 endif( APPLE )
 
+<<<<<<< HEAD
 
 if(ENABLE_COVERAGE_TESTING)
     SET(CMAKE_CXX_FLAGS "--coverage ${CMAKE_CXX_FLAGS}")
 endif()
 
 add_library( appbase SHARED
+=======
+add_library( appbase
+>>>>>>> eos/master
              application.cpp
              version.cpp
              ${HEADERS}
@@ -61,7 +68,12 @@ target_include_directories( appbase
                             PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/include"
                             ${Boost_INCLUDE_DIR})
 
-set_target_properties( appbase PROPERTIES PUBLIC_HEADER "${HEADERS}" )
+set_target_properties( appbase PROPERTIES PUBLIC_HEADER "${HEADERS}" CXX_STANDARD 14 CXX_EXTENSIONS OFF )
+
+target_compile_options( appbase PRIVATE -Wall -Wno-conversion -Wno-deprecated-declarations )
+if(ENABLE_COVERAGE_TESTING)
+    target_compile_options( appbase PRIVATE "--coverage ${CMAKE_CXX_FLAGS}" )
+endif()
 
 find_package(Git)
 if(EXISTS ${CMAKE_SOURCE_DIR}/.git AND GIT_FOUND)
@@ -71,6 +83,7 @@ if(EXISTS ${CMAKE_SOURCE_DIR}/.git AND GIT_FOUND)
 else()
   set(VERSION_STRING "Unknown")
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/version.cpp @ONLY ESCAPE_QUOTES)
+  set_source_files_properties(version.cpp PROPERTIES GENERATED TRUE)
 endif()
 
 set(CPACK_PACKAGING_INSTALL_PREFIX /)

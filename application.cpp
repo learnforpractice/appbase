@@ -33,6 +33,8 @@ class application_impl {
       bfs::path               _config_file_name;
 
       uint64_t                _version;
+      std::atomic_bool        _is_quiting{false};
+
       bool _debug = false;
       bool _rpc = false;
       bool _client = false;
@@ -42,6 +44,8 @@ class application_impl {
       bool _is_eos_main_net = false;
       string _ipc_dir;
       };
+
+};
 
 application::application()
 :my(new application_impl()){
@@ -76,11 +80,37 @@ bfs::path application::get_logging_conf() const {
 
 void application::startup() {
    try {
-      for (auto p : initialized_plugins) {
-         printf("%s \n", p->name().c_str());
-         p->startup();
+
+      // setup seperate io_service and thread of signals
+      std::shared_ptr<boost::asio::io_service> sig_io_serv = std::make_shared<boost::asio::io_service>();
+
+      std::shared_ptr<boost::asio::signal_set> sigint_set(new boost::asio::signal_set(*sig_io_serv, SIGINT));
+      sigint_set->async_wait([sigint_set,this](const boost::system::error_code& err, int num) {
+         quit();
+         sigint_set->cancel();
+      });
+
+      std::shared_ptr<boost::asio::signal_set> sigterm_set(new boost::asio::signal_set(*sig_io_serv, SIGTERM));
+      sigterm_set->async_wait([sigterm_set,this](const boost::system::error_code& err, int num) {
+         quit();
+         sigterm_set->cancel();
+      });
+
+      std::shared_ptr<boost::asio::signal_set> sigpipe_set(new boost::asio::signal_set(*sig_io_serv, SIGPIPE));
+      sigpipe_set->async_wait([sigpipe_set,this](const boost::system::error_code& err, int num) {
+         quit();
+         sigpipe_set->cancel();
+      });
+
+      std::thread sig_thread( [sig_io_serv]() { sig_io_serv->run(); } );
+      sig_thread.detach();
+
+      for( auto plugin : initialized_plugins ) {
+         if( is_quiting() ) return;
+         plugin->startup();
       }
-   } catch(...) {
+
+   } catch( ... ) {
       shutdown();
       throw;
    }
@@ -289,6 +319,7 @@ void application::shutdown() {
 }
 
 void application::quit() {
+   my->_is_quiting = true;
    io_serv->stop();
 }
 
@@ -318,26 +349,11 @@ bool application::interactive_mode() const {
 
 bool application::is_eos_main_net() const {
    return my->_is_eos_main_net;
+bool application::is_quiting() const {
+   return my->_is_quiting;
 }
 
 void application::exec() {
-   std::shared_ptr<boost::asio::signal_set> sigint_set(new boost::asio::signal_set(*io_serv, SIGINT));
-   sigint_set->async_wait([sigint_set,this](const boost::system::error_code& err, int num) {
-     quit();
-     sigint_set->cancel();
-   });
-
-   std::shared_ptr<boost::asio::signal_set> sigterm_set(new boost::asio::signal_set(*io_serv, SIGTERM));
-   sigterm_set->async_wait([sigterm_set,this](const boost::system::error_code& err, int num) {
-     quit();
-     sigterm_set->cancel();
-   });
-
-   std::shared_ptr<boost::asio::signal_set> sigpipe_set(new boost::asio::signal_set(*io_serv, SIGPIPE));
-   sigpipe_set->async_wait([sigpipe_set,this](const boost::system::error_code& err, int num) {
-     quit();
-     sigpipe_set->cancel();
-   });
 
    io_serv->run();
 

@@ -87,7 +87,8 @@ namespace appbase {
          void                  shutdown();
 
          /**
-          *  Wait until quit(), SIGINT or SIGTERM and then shutdown
+          *  Wait until quit(), SIGINT or SIGTERM and then shutdown.
+          *  Should only be executed from one thread.
           */
          void                 exec();
          void                 quit();
@@ -102,6 +103,12 @@ namespace appbase {
 
          bool                 debug_mode() const;
          void                 set_debug_mode(bool d);
+
+         /**
+          * If in long running process this flag can be checked to see if processing should be stoppped.
+          * @return true if quit() has been called.
+          */
+         bool                 is_quiting()const;
 
          static application&  instance();
 
@@ -185,6 +192,10 @@ namespace appbase {
             }
          }
 
+         /**
+          * Do not run io_service in any other threads, as application assumes single-threaded execution in exec().
+          * @return io_serivice of application
+          */
          boost::asio::io_service& get_io_service() { return *io_serv; }
          bool has_option(const char* option);
          int get_option(const char* option, char *result, int size);
