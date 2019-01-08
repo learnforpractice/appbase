@@ -45,8 +45,6 @@ class application_impl {
       string _ipc_dir;
       };
 
-};
-
 application::application()
 :my(new application_impl()){
    io_serv = std::make_shared<boost::asio::io_service>();
@@ -349,6 +347,8 @@ bool application::interactive_mode() const {
 
 bool application::is_eos_main_net() const {
    return my->_is_eos_main_net;
+}
+
 bool application::is_quiting() const {
    return my->_is_quiting;
 }
